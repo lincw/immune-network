@@ -1,0 +1,10 @@
+node_modules
+dist
+dist-ssr
+*.local
+.DS_Store
+.vite
+*.tsbuildinfo
+
+# Source poster (large binary, not redistributed)
+immunologic-networks-poster.pdf
