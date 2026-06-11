@@ -11,11 +11,15 @@ own color, so the graph reads like imaging data rather than a flat diagram.
 
 ## What's inside
 
-- **123 entities / ~200 relationships** — a hand-curated immunology knowledge
-  graph spanning humoral and cellular immunity: the T-helper differentiation tree
-  (Th1/Th2/Th9/Th17/Th22/Tfh/Treg), B-cell and antibody axis, innate effectors
-  (DC, macrophage, NK, granulocytes), and the cytokines and transcription factors
-  that wire them together, each tagged with the functional outcomes it drives.
+- **160+ entities / 300+ relationships** — a curated immunology knowledge graph
+  transcribed from the poster, spanning humoral and cellular immunity: the
+  T-helper differentiation tree (Th1/Th2/Th9/Th17/Th22/Tfh/Treg), B-cell and
+  antibody axis, innate effectors (DC, macrophage, NK, granulocytes), the
+  inflammatory-mediator and chemokine layer, and the cytokines and transcription
+  factors that wire them together, each tagged with the functional outcomes it
+  drives.
+- **Filter by category and relationship type** — toggle node categories or any of
+  the nine edge types (differentiation, secretes, induces, …) to declutter the map.
 - **Search → focus → neighbors** — fuzzy search across labels and synonyms
   (e.g. `interferon gamma` finds **IFN-γ**), then 1-hop neighbor highlighting.
 - **Walk the network** — every connection in the info panel is a button that

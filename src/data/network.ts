@@ -431,6 +431,56 @@ const nodes: NetworkNode[] = [
   { id: "affinity-maturation", label: "Affinity maturation", category: "function", subsystem: "humoral", synonyms: ["improved affinity"], description: "Iterative selection of higher-affinity B cells in the germinal center, yielding better antibodies over time." },
   { id: "autoimmunity", label: "Autoimmunity", category: "function", subsystem: "shared", synonyms: ["autoimmune disease", "organ specific immunity", "loss of tolerance"], description: "Pathological immune attack on self, often linked to dysregulated Th1/Th17 responses or failed regulation." },
   { id: "tumor-defense", label: "Anti-tumor immunity", category: "function", subsystem: "cellular", synonyms: ["cancer defense", "tumor surveillance", "defense against cancer"], description: "Recognition and killing of transformed cells by CTLs and NK cells, central to immune surveillance." },
+
+  // ===== Additional entities transcribed from the poster (re-digitization) =====
+  // -- cells / tissues --
+  { id: "granulocyte", label: "Granulocyte", category: "cell", subsystem: "innate", synonyms: ["granulocytes", "polymorphonuclear cell"], description: "Collective term for neutrophils, eosinophils, and basophils — innate effectors recruited by chemokines to sites of inflammation." },
+  { id: "apc", label: "Antigen-presenting cell", category: "cell", subsystem: "innate", synonyms: ["apc", "professional antigen presenting cell", "activated apc"], description: "Activated cell (dendritic cell, macrophage, or B cell) that displays antigen on MHC and provides co-stimulation to prime T cells." },
+  { id: "infected-cell", label: "Infected cell / APC", category: "cell", subsystem: "cellular", synonyms: ["target cell", "virus-infected cell"], description: "Cell presenting antigen on MHC-I that is recognized and killed by CD8⁺ cytotoxic T cells." },
+  { id: "hypothalamus", label: "Hypothalamus", category: "cell", subsystem: "shared", synonyms: ["thermoregulatory center"], description: "Brain region that responds to pyrogenic cytokines (IL-1, IL-6, TNF-α) by raising the body's temperature set point." },
+  { id: "bystander", label: "Bystander cell", category: "cell", subsystem: "shared", synonyms: ["bystander"], description: "Neighbouring cell affected by inflammatory cytokines released during an immune response without being the primary target." },
+
+  // -- cytokines / chemokines / soluble mediators --
+  { id: "pdgf", label: "PDGF", category: "cytokine", subsystem: "shared", synonyms: ["platelet derived growth factor"], description: "Growth factor promoting fibroblast proliferation and tissue remodeling during repair and chronic inflammation." },
+  { id: "ccl345", label: "CCL3/4/5", category: "cytokine", subsystem: "innate", synonyms: ["mip-1α", "mip-1β", "rantes", "mip-1", "macrophage inflammatory protein"], description: "Chemokines (MIP-1α, MIP-1β, RANTES) that recruit granulocytes, NK cells, and monocytes to inflamed tissue." },
+  { id: "mcp1", label: "MCP-1", category: "cytokine", subsystem: "innate", synonyms: ["ccl2", "monocyte chemoattractant protein 1"], description: "Chemokine that recruits monocytes/macrophages to sites of inflammation." },
+  { id: "groa", label: "GRO-α", category: "cytokine", subsystem: "innate", synonyms: ["cxcl1", "gro alpha", "kc"], description: "Chemokine that recruits and activates neutrophils." },
+  { id: "nos2", label: "Nitric oxide", category: "cytokine", subsystem: "innate", synonyms: ["no", "nos2", "inos", "reactive nitrogen species"], description: "Antimicrobial effector produced by activated macrophages (via iNOS/NOS2) that kills intracellular pathogens and tumor cells." },
+  { id: "mmp", label: "MMPs", category: "cytokine", subsystem: "shared", synonyms: ["matrix metalloproteinases", "mmp"], description: "Matrix-degrading enzymes driving tissue remodeling, angiogenesis, and tumor invasion." },
+  { id: "pge2", label: "PGE2", category: "cytokine", subsystem: "innate", synonyms: ["prostaglandin e2"], description: "Lipid mediator amplifying inflammation, pain, and fever during immune responses." },
+
+  // -- receptors / surface molecules --
+  { id: "cd84", label: "CD84/Ly9", category: "receptor", subsystem: "humoral", synonyms: ["slam family receptor", "ly9", "cd84"], description: "SLAM-family homotypic receptors that stabilize the T-follicular-helper–B-cell synapse in the germinal center." },
+  { id: "il21r", label: "IL-21R", category: "receptor", subsystem: "humoral", synonyms: ["interleukin 21 receptor"], description: "Receptor for IL-21 on B cells and T cells; signals via the common gamma chain and STAT3." },
+  { id: "il23r", label: "IL-23R", category: "receptor", subsystem: "cellular", synonyms: ["interleukin 23 receptor"], description: "Receptor (with IL-12Rβ1) for IL-23 that sustains the Th17 program via STAT3/STAT4." },
+  { id: "icam1", label: "ICAM-1", category: "receptor", subsystem: "shared", synonyms: ["cd54", "intercellular adhesion molecule 1"], description: "Adhesion molecule upregulated by inflammation that mediates leukocyte adhesion and supports T-cell activation." },
+
+  // -- transcription factor --
+  { id: "irf2", label: "IRF2", category: "transcriptionFactor", subsystem: "cellular", synonyms: ["interferon regulatory factor 2"], description: "Transcription factor that modulates type-I-interferon responsiveness and contributes to CD8⁺ sensitization." },
+
+  // -- functions / outcomes shown on the poster --
+  { id: "type2-hyper", label: "Type II hypersensitivity", category: "function", subsystem: "humoral", synonyms: ["antibody-mediated hypersensitivity", "type ii hypersensitivity", "cytotoxic hypersensitivity"], description: "Antibody (IgG/IgM) binding to cell-surface or matrix antigens, triggering complement- and Fc-mediated cell damage." },
+  { id: "bcell-proliferation", label: "B-cell proliferation", category: "function", subsystem: "humoral", synonyms: ["clonal expansion of b cells"], description: "Antigen- and cytokine-driven expansion of activated B-cell clones during the humoral response." },
+  { id: "reduced-clonal-expansion", label: "Reduced clonal expansion", category: "function", subsystem: "shared", synonyms: ["suppressed proliferation"], description: "Treg-mediated limitation of lymphocyte clonal expansion that restrains the magnitude of a response." },
+  { id: "th2-homing", label: "Th2 tissue homing", category: "function", subsystem: "humoral", synonyms: ["tissue homing of th2 cells"], description: "Recruitment of Th2 cells into peripheral tissues, driven by IL-4, IL-5, and IL-13." },
+  { id: "mast-function", label: "Mast-cell growth & function", category: "function", subsystem: "innate", synonyms: ["mast cell activation"], description: "Cytokine-supported growth and functional activation of mast cells in allergic and anti-parasite responses." },
+  { id: "eosinophil-survival", label: "Eosinophil growth & survival", category: "function", subsystem: "humoral", synonyms: ["prolonged survival of eosinophils", "eosinophil differentiation"], description: "Differentiation, growth, and prolonged survival of eosinophils, driven by IL-5, IL-13, and GM-CSF." },
+  { id: "asthma", label: "Asthma", category: "function", subsystem: "humoral", synonyms: ["allergic airway disease", "airway hyperreactivity"], description: "Type-2 inflammatory airway disease driven by Th2 cytokines acting on smooth muscle and epithelium." },
+  { id: "mucus", label: "Mucus production", category: "function", subsystem: "humoral", synonyms: ["mucus secretion", "goblet cell hyperplasia"], description: "Type-2-cytokine-induced mucus secretion at epithelial barriers (IL-9, IL-13)." },
+  { id: "cd8-differentiation", label: "Effector / memory CD8 differentiation", category: "function", subsystem: "cellular", synonyms: ["cytotoxic t cell differentiation"], description: "Differentiation of naïve CD8⁺ T cells into effector and memory cytotoxic cells, driven by IL-2, IL-12, IL-21, and type-I IFNs." },
+  { id: "cd8-hypersensitivity", label: "CD8 contact hypersensitivity", category: "function", subsystem: "cellular", synonyms: ["contact hypersensitivity", "sensitization"], description: "CD8-mediated hypersensitivity following sensitization to antigen presented by infected or antigen-presenting cells." },
+  { id: "macrophage-activation", label: "Macrophage activation", category: "function", subsystem: "cellular", synonyms: ["classical macrophage activation", "m1 activation"], description: "IFN-γ/TNF-licensed activation of macrophages, yielding nitric oxide, oxygen radicals, and enhanced MHC and microbicidal activity." },
+  { id: "epithelial-apoptosis", label: "Epithelial apoptosis & shedding", category: "function", subsystem: "cellular", synonyms: ["apoptosis and epithelial shedding", "epithelial cell death"], description: "Programmed death and shedding of epithelial cells driven by IL-18/MHC-I and cytotoxic effectors." },
+  { id: "smooth-muscle-apoptosis", label: "Smooth-muscle apoptosis", category: "function", subsystem: "cellular", synonyms: ["smooth muscle cell apoptosis"], description: "Cytotoxic-effector-induced apoptosis of smooth-muscle cells." },
+  { id: "osteoclast-activation", label: "Osteoclast activation", category: "function", subsystem: "cellular", synonyms: ["bone resorption", "activates osteoclasts"], description: "Th17/IL-17-driven activation of osteoclasts leading to bone resorption, as in inflammatory arthritis." },
+  { id: "antibody-cell-death", label: "Antibody-induced cell death", category: "function", subsystem: "humoral", synonyms: ["fas engagement", "antibody-dependent apoptosis"], description: "Cell death triggered through Fas engagement during antibody-driven responses." },
+  { id: "tcell-activation", label: "T-cell activation", category: "function", subsystem: "cellular", synonyms: ["t lymphocyte activation"], description: "Engagement and activation of T cells, supported by adhesion molecules such as ICAM-1 and chemoattractants." },
+  { id: "myeloid-expansion", label: "Myeloid lineage expansion", category: "function", subsystem: "innate", synonyms: ["expansion of myeloid lineage", "monocyte and neutrophil recruitment"], description: "Growth-factor-driven expansion and recruitment of myeloid cells (monocytes, neutrophils) feeding hematopoiesis." },
+  { id: "tumor-invasion", label: "Tumor invasion / metastasis", category: "function", subsystem: "shared", synonyms: ["metastasis", "tumor invasion"], description: "Matrix remodeling and angiogenesis that can facilitate tumor invasion and metastasis during chronic inflammation." },
+  { id: "chronic-inflammation", label: "Acute/chronic inflammation", category: "function", subsystem: "innate", synonyms: ["chronic inflammation", "induction of acute/chronic inflammation", "persistent inflammation"], description: "Sustained inflammatory state induced by ongoing production of cytokines (IL-6, TNF-α) and chemokines (IL-8, GRO-α, MCP-1) by fibroblasts, macrophages, and tissue cells." },
+  { id: "cell-adhesion", label: "Cell adhesion", category: "function", subsystem: "shared", synonyms: ["leukocyte adhesion"], description: "Adhesion-molecule-mediated attachment of cells, enabling leukocyte recruitment and tissue organization." },
+  { id: "granulocyte-recruitment", label: "Granulocyte recruitment", category: "function", subsystem: "innate", synonyms: ["granulocyte recruitment"], description: "Chemokine-driven recruitment of granulocytes to inflamed tissue." },
+  { id: "neutrophil-survival", label: "Neutrophil survival & recruitment", category: "function", subsystem: "innate", synonyms: ["prolonged neutrophil survival"], description: "IL-17-family-driven prolonged survival and recruitment of neutrophils at barrier sites." },
 ];
 
 const edges: NetworkEdge[] = [
@@ -473,6 +523,12 @@ const edges: NetworkEdge[] = [
   // ---- Cytokines driving differentiation / activating TFs ----
   { source: "il12", target: "th1", type: "induces" },
   { source: "il12", target: "stat4", type: "drivesTF" },
+  // Additional STAT4 activators (beyond the primary IL-12 axis).
+  { source: "ifn1", target: "stat4", type: "drivesTF", label: "antiviral, NK cells" },
+  { source: "il23", target: "stat4", type: "drivesTF", label: "shared IL-12Rβ1" },
+  { source: "il2", target: "stat4", type: "drivesTF" },
+  { source: "il27", target: "stat4", type: "drivesTF", label: "early Th1" },
+  { source: "il21", target: "stat4", type: "drivesTF" },
   { source: "ifng", target: "tbet", type: "drivesTF" },
   { source: "il18", target: "ifng", type: "induces", label: "with IL-12" },
   { source: "il4", target: "th2", type: "induces" },
@@ -663,6 +719,159 @@ const edges: NetworkEdge[] = [
   { source: "il2", target: "cd132", type: "bindsReceptor", label: "shared γc" },
   { source: "il21", target: "cd132", type: "bindsReceptor", label: "shared γc" },
   { source: "il4", target: "cd132", type: "bindsReceptor", label: "shared γc" },
+
+  // ===== Additional relationships transcribed from the poster =====
+  // -- antibody effector specifics --
+  { source: "igg1", target: "type2-hyper", type: "mediates" },
+  { source: "igg2", target: "antibody-cell-death", type: "mediates", label: "Fas engagement" },
+
+  // -- follicle / Tfh–B receptors & B-cell proliferation --
+  { source: "tfh", target: "cd84", type: "costimulation", label: "SLAM homotypic" },
+  { source: "il21", target: "il21r", type: "bindsReceptor" },
+  { source: "gc-b", target: "il21r", type: "expressesTF" },
+  { source: "activated-b", target: "bcell-proliferation", type: "mediates" },
+  { source: "il4", target: "activated-b", type: "induces" },
+  { source: "il6", target: "activated-b", type: "induces" },
+  { source: "il21", target: "class-switch", type: "induces" },
+
+  // -- CD8 priming & effector axis --
+  { source: "naive-cd8", target: "cd8-differentiation", type: "mediates" },
+  { source: "il2", target: "cd8-differentiation", type: "induces" },
+  { source: "il12", target: "cd8-differentiation", type: "induces" },
+  { source: "il21", target: "cd8-differentiation", type: "induces" },
+  { source: "ifn1", target: "cd8-differentiation", type: "induces", label: "type-I IFN" },
+  { source: "infected-cell", target: "mhc1", type: "expressesTF", label: "antigen on MHC-I" },
+  { source: "ctl", target: "infected-cell", type: "bindsReceptor", label: "TCR–MHC-I" },
+  { source: "ctl", target: "cd8-hypersensitivity", type: "mediates" },
+  { source: "ctl", target: "smooth-muscle-apoptosis", type: "mediates" },
+  { source: "ctl", target: "epithelial-apoptosis", type: "mediates" },
+  { source: "irf2", target: "ifng", type: "inhibits", label: "represses IFN response" },
+
+  // -- chemokine-driven recruitment --
+  { source: "ccl345", target: "granulocyte", type: "induces", label: "recruitment" },
+  { source: "ccl345", target: "nk", type: "induces", label: "recruitment" },
+  { source: "ccl345", target: "monocyte", type: "induces", label: "recruitment" },
+  { source: "ccl345", target: "granulocyte-recruitment", type: "mediates" },
+  { source: "ccl345", target: "inflammation", type: "induces" },
+
+  // -- macrophage activation --
+  { source: "ifng", target: "macrophage-activation", type: "induces" },
+  { source: "macrophage-activation", target: "nos2", type: "induces" },
+  { source: "macrophage-activation", target: "intracellular-defense", type: "mediates" },
+  { source: "macrophage-activation", target: "tumor-defense", type: "mediates" },
+  { source: "nos2", target: "intracellular-defense", type: "mediates" },
+  { source: "macrophage", target: "nos2", type: "secretes" },
+  { source: "macrophage", target: "pge2", type: "secretes" },
+
+  // -- Th1 effector & cross-regulation --
+  { source: "th1", target: "tnfa", type: "secretes" },
+  { source: "ifng", target: "th2", type: "inhibits" },
+  { source: "ifng", target: "th17", type: "inhibits", label: "Th2/Th17 function" },
+  { source: "tnfb", target: "delayed-hypersensitivity", type: "mediates" },
+  { source: "tnfb", target: "intracellular-defense", type: "mediates" },
+
+  // -- Th2 effector / allergy --
+  { source: "th2", target: "mast-function", type: "mediates" },
+  { source: "il9", target: "mast-function", type: "induces" },
+  { source: "il5", target: "eosinophil-survival", type: "induces" },
+  { source: "il13", target: "eosinophil-survival", type: "induces" },
+  { source: "gmcsf", target: "eosinophil-survival", type: "induces" },
+  { source: "th2", target: "asthma", type: "mediates" },
+  { source: "il13", target: "asthma", type: "induces" },
+  { source: "th2", target: "th2-homing", type: "mediates" },
+  { source: "eotaxin", target: "basophil", type: "induces", label: "recruitment" },
+  { source: "il13", target: "mucus", type: "induces" },
+  { source: "il9", target: "mucus", type: "induces" },
+
+  // -- Th9 --
+  { source: "th9", target: "il10", type: "secretes" },
+  { source: "il9", target: "inflammation", type: "induces" },
+
+  // -- Th22 --
+  { source: "th22", target: "il13", type: "secretes" },
+  { source: "th22", target: "tnfa", type: "secretes" },
+  { source: "il6", target: "th22", type: "induces" },
+  { source: "tnfa", target: "th22", type: "induces" },
+
+  // -- Th17 effector outputs --
+  { source: "th17", target: "cmaf", type: "expressesTF" },
+  { source: "th17", target: "il23r", type: "expressesTF" },
+  { source: "il23", target: "il23r", type: "bindsReceptor" },
+  { source: "il17", target: "cell-adhesion", type: "induces" },
+  { source: "il17", target: "neutrophil-survival", type: "induces" },
+  { source: "il22", target: "neutrophil-survival", type: "induces" },
+  { source: "il17", target: "chronic-inflammation", type: "induces" },
+  { source: "th17", target: "osteoclast-activation", type: "mediates" },
+  { source: "th17", target: "tumor-defense", type: "mediates", label: "defense against cancer" },
+  { source: "il17", target: "pge2", type: "induces" },
+  { source: "il17", target: "nos2", type: "induces" },
+  { source: "il17", target: "groa", type: "induces" },
+  { source: "il17", target: "mcp1", type: "induces" },
+  { source: "groa", target: "neutrophil", type: "induces", label: "recruitment" },
+  { source: "mcp1", target: "monocyte", type: "induces", label: "recruitment" },
+  { source: "il17", target: "icam1", type: "induces" },
+  { source: "icam1", target: "tcell-activation", type: "mediates" },
+  { source: "icam1", target: "cell-adhesion", type: "mediates" },
+
+  // -- myeloid expansion / hematopoiesis --
+  { source: "gcsf", target: "myeloid-expansion", type: "induces" },
+  { source: "gmcsf", target: "myeloid-expansion", type: "induces" },
+  { source: "myeloid-expansion", target: "hematopoiesis", type: "mediates" },
+  { source: "gmcsf", target: "granulocyte-recruitment", type: "induces" },
+
+  // -- inflammation hub & tissue remodeling --
+  { source: "mmp", target: "tissue-remodeling", type: "mediates" },
+  { source: "mmp", target: "tumor-invasion", type: "mediates" },
+  { source: "pdgf", target: "tissue-remodeling", type: "induces" },
+  { source: "nos2", target: "inflammation", type: "induces" },
+  { source: "pge2", target: "inflammation", type: "induces" },
+  { source: "il6", target: "chronic-inflammation", type: "induces" },
+  { source: "tnfa", target: "chronic-inflammation", type: "induces" },
+  // IL-6, IL-8 and other chemokines -> induction of acute/chronic inflammation
+  // (per the poster; produced by fibroblasts and tissue cells).
+  { source: "il8", target: "chronic-inflammation", type: "induces" },
+  { source: "groa", target: "chronic-inflammation", type: "induces" },
+  { source: "mcp1", target: "chronic-inflammation", type: "induces" },
+  { source: "ccl345", target: "chronic-inflammation", type: "induces" },
+  { source: "fibroblast", target: "chronic-inflammation", type: "mediates" },
+  { source: "tnfa", target: "tumor-invasion", type: "induces" },
+
+  // -- tissue/stromal cells producing inflammatory mediators --
+  { source: "stromal", target: "il6", type: "secretes" },
+  { source: "epithelial", target: "il6", type: "secretes" },
+  { source: "fibroblast", target: "il8", type: "secretes" },
+  { source: "fibroblast", target: "pdgf", type: "secretes" },
+  { source: "endothelial", target: "icam1", type: "expressesTF", label: "adhesion" },
+
+  // -- pyrogenic axis (fever) --
+  { source: "il1", target: "hypothalamus", type: "induces" },
+  { source: "il6", target: "hypothalamus", type: "induces" },
+  { source: "tnfa", target: "hypothalamus", type: "induces" },
+  { source: "hypothalamus", target: "fever", type: "mediates" },
+
+  // -- antigen-presenting cell --
+  { source: "apc", target: "naive-cd4", type: "costimulation", label: "antigen presentation" },
+  { source: "apc", target: "naive-cd8", type: "costimulation", label: "cross-presentation" },
+  { source: "apc", target: "mhc2", type: "costimulation" },
+  { source: "apc", target: "il12", type: "secretes" },
+  { source: "apc", target: "tnfa", type: "secretes" },
+  { source: "apc", target: "il8", type: "secretes" },
+  { source: "monocyte", target: "apc", type: "differentiation" },
+
+  // -- granulocyte & bystander --
+  { source: "granulocyte", target: "inflammation", type: "mediates" },
+  { source: "granulocyte", target: "antifungal-bacterial", type: "mediates" },
+  { source: "il1", target: "bystander", type: "induces" },
+  { source: "tnfa", target: "bystander", type: "induces" },
+  { source: "bystander", target: "inflammation", type: "mediates" },
+
+  // -- epithelial apoptosis (keratinocyte path) --
+  { source: "il18", target: "epithelial-apoptosis", type: "induces" },
+  { source: "keratinocyte", target: "epithelial-apoptosis", type: "mediates" },
+
+  // -- regulatory --
+  { source: "treg", target: "reduced-clonal-expansion", type: "mediates" },
+  { source: "itreg", target: "tgfb", type: "secretes" },
 ];
 
 export const networkData: NetworkData = { nodes, edges };

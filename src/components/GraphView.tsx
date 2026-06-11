@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef } from "react";
 import cytoscape, { type Core, type ElementDefinition } from "cytoscape";
 import fcose from "cytoscape-fcose";
 import { networkData } from "../data/network";
-import type { Category } from "../types";
+import type { Category, EdgeType } from "../types";
 import { graphPalette, type GraphPalette, type ThemeName } from "../theme";
 
 cytoscape.use(fcose);
@@ -10,6 +10,7 @@ cytoscape.use(fcose);
 interface GraphViewProps {
   selectedId: string | null;
   activeCategories: Set<Category>;
+  activeEdgeTypes: Set<EdgeType>;
   theme: ThemeName;
   onSelect: (id: string | null) => void;
 }
@@ -125,6 +126,7 @@ function buildStylesheet(p: GraphPalette): cytoscape.StylesheetStyle[] {
 export default function GraphView({
   selectedId,
   activeCategories,
+  activeEdgeTypes,
   theme,
   onSelect,
 }: GraphViewProps) {
@@ -180,7 +182,8 @@ export default function GraphView({
     cy.style().fromJson(buildStylesheet(graphPalette(theme))).update();
   }, [theme]);
 
-  // Apply category visibility filter.
+  // Apply category + edge-type visibility filters. An edge is hidden if either
+  // endpoint's category is hidden or its relationship type is toggled off.
   useEffect(() => {
     const cy = cyRef.current;
     if (!cy) return;
@@ -190,11 +193,13 @@ export default function GraphView({
         n.toggleClass("hidden", !visible);
       });
       cy.edges().forEach((e) => {
-        const hide = e.source().hasClass("hidden") || e.target().hasClass("hidden");
-        e.toggleClass("hidden", hide);
+        const typeOff = !activeEdgeTypes.has(e.data("type") as EdgeType);
+        const endpointHidden =
+          e.source().hasClass("hidden") || e.target().hasClass("hidden");
+        e.toggleClass("hidden", typeOff || endpointHidden);
       });
     });
-  }, [activeCategories]);
+  }, [activeCategories, activeEdgeTypes]);
 
   // Apply focus highlighting whenever the selection changes.
   useEffect(() => {

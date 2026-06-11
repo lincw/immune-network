@@ -66,6 +66,32 @@ export const CATEGORY_LABELS: Record<Category, string> = {
   function: "Functions / outcomes",
 };
 
+export const EDGE_TYPE_ORDER: EdgeType[] = [
+  "differentiation",
+  "expressesTF",
+  "drivesTF",
+  "secretes",
+  "induces",
+  "bindsReceptor",
+  "costimulation",
+  "mediates",
+  "inhibits",
+];
+
+// Short chip labels for the edge-type filter (the verb form is used in the
+// info panel; these are noun-ish toggles for the legend).
+export const EDGE_TYPE_FILTER_LABELS: Record<EdgeType, string> = {
+  differentiation: "Differentiation",
+  expressesTF: "Defines (TF)",
+  drivesTF: "Activates TF",
+  secretes: "Secretes",
+  induces: "Induces",
+  bindsReceptor: "Binds receptor",
+  costimulation: "Co-stimulation",
+  mediates: "Mediates",
+  inhibits: "Inhibits",
+};
+
 export const EDGE_TYPE_LABELS: Record<EdgeType, string> = {
   differentiation: "differentiates into",
   secretes: "secretes",

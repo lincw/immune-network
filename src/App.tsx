@@ -5,7 +5,12 @@ import InfoPanel from "./components/InfoPanel";
 import Legend from "./components/Legend";
 import { NetworkIndex } from "./graph";
 import { networkData } from "./data/network";
-import { CATEGORY_ORDER, type Category } from "./types";
+import {
+  CATEGORY_ORDER,
+  EDGE_TYPE_ORDER,
+  type Category,
+  type EdgeType,
+} from "./types";
 import type { ThemeName } from "./theme";
 import "./styles/app.css";
 
@@ -20,11 +25,15 @@ function initialTheme(): ThemeName {
 export default function App() {
   const index = useMemo(() => new NetworkIndex(networkData), []);
   const counts = useMemo(() => countByCategory(), []);
+  const edgeCounts = useMemo(() => countByEdgeType(), []);
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [theme, setTheme] = useState<ThemeName>(initialTheme);
   const [activeCategories, setActiveCategories] = useState<Set<Category>>(
     () => new Set(CATEGORY_ORDER),
+  );
+  const [activeEdgeTypes, setActiveEdgeTypes] = useState<Set<EdgeType>>(
+    () => new Set(EDGE_TYPE_ORDER),
   );
 
   useEffect(() => {
@@ -42,6 +51,19 @@ export default function App() {
       // Never allow an empty graph — re-enable all if the last one is removed.
       return next.size === 0 ? new Set(CATEGORY_ORDER) : next;
     });
+  };
+
+  const toggleEdgeType = (type: EdgeType) => {
+    setActiveEdgeTypes((prev) => {
+      const next = new Set(prev);
+      if (next.has(type)) next.delete(type);
+      else next.add(type);
+      return next;
+    });
+  };
+
+  const setAllEdgeTypes = (on: boolean) => {
+    setActiveEdgeTypes(on ? new Set(EDGE_TYPE_ORDER) : new Set());
   };
 
   return (
@@ -73,6 +95,7 @@ export default function App() {
         <GraphView
           selectedId={selectedId}
           activeCategories={activeCategories}
+          activeEdgeTypes={activeEdgeTypes}
           theme={theme}
           onSelect={setSelectedId}
         />
@@ -80,6 +103,10 @@ export default function App() {
           active={activeCategories}
           counts={counts}
           onToggle={toggleCategory}
+          activeEdgeTypes={activeEdgeTypes}
+          edgeCounts={edgeCounts}
+          onToggleEdgeType={toggleEdgeType}
+          onSetAllEdgeTypes={setAllEdgeTypes}
         />
         <InfoPanel node={selectedNode} index={index} onSelect={setSelectedId} />
       </main>
@@ -101,5 +128,13 @@ function countByCategory(): Record<Category, number> {
     CATEGORY_ORDER.map((c) => [c, 0]),
   ) as Record<Category, number>;
   for (const node of networkData.nodes) counts[node.category] += 1;
+  return counts;
+}
+
+function countByEdgeType(): Record<EdgeType, number> {
+  const counts = Object.fromEntries(
+    EDGE_TYPE_ORDER.map((t) => [t, 0]),
+  ) as Record<EdgeType, number>;
+  for (const edge of networkData.edges) counts[edge.type] += 1;
   return counts;
 }
