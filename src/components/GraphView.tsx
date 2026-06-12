@@ -1,11 +1,9 @@
 import { useEffect, useMemo, useRef } from "react";
 import cytoscape, { type Core, type ElementDefinition } from "cytoscape";
-import fcose from "cytoscape-fcose";
 import { networkData } from "../data/network";
+import { computePosterLayout } from "../layout/posterLayout";
 import type { Category, EdgeType } from "../types";
 import { graphPalette, type GraphPalette, type ThemeName } from "../theme";
-
-cytoscape.use(fcose);
 
 interface GraphViewProps {
   selectedId: string | null;
@@ -133,6 +131,9 @@ export default function GraphView({
   const containerRef = useRef<HTMLDivElement>(null);
   const cyRef = useRef<Core | null>(null);
   const elements = useMemo(buildElements, []);
+  // Poster-faithful swimlane positions (columns = subsystem, tiers = category).
+  // Deterministic, computed once; guarantees no node/label overlap by construction.
+  const positions = useMemo(() => computePosterLayout(networkData), []);
   const onSelectRef = useRef(onSelect);
   onSelectRef.current = onSelect;
 
@@ -147,13 +148,11 @@ export default function GraphView({
       maxZoom: 3,
       style: buildStylesheet(graphPalette(theme)),
       layout: {
-        name: "fcose",
-        quality: "default",
-        animate: false,
-        nodeSeparation: 140,
-        idealEdgeLength: 130,
-        nodeRepulsion: 14000,
-        padding: 40,
+        name: "preset",
+        positions: (el: cytoscape.NodeSingular) =>
+          positions.get(el.id()) ?? { x: 0, y: 0 },
+        padding: 60,
+        fit: true,
       } as cytoscape.LayoutOptions,
     });
 
@@ -173,7 +172,7 @@ export default function GraphView({
     };
     // theme intentionally excluded: applied via the dedicated effect below.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [elements]);
+  }, [elements, positions]);
 
   // Re-skin the canvas when the theme changes (classes/positions preserved).
   useEffect(() => {
@@ -202,20 +201,43 @@ export default function GraphView({
   }, [activeCategories, activeEdgeTypes]);
 
   // Apply focus highlighting whenever the selection changes.
+  //
+  // The poster layout deliberately spreads the full network across a wide
+  // canvas, so a node's neighbors can sit columns/tiers away. On focus we
+  // therefore PULL the selected node's neighborhood into a compact concentric
+  // cluster (selected node centered, neighbors ringed around it) so the
+  // sub-network reads as its own small graph. Clearing the selection animates
+  // every node back to its canonical poster position.
   useEffect(() => {
     const cy = cyRef.current;
     if (!cy) return;
 
+    // Reset classes and return all nodes to their canonical poster spots so we
+    // always start the focus animation from a known state (also undoes a prior
+    // selection's compacting).
     cy.batch(() => {
       cy.elements().removeClass("dim neighbor selected active");
-      if (!selectedId) return;
+      cy.nodes().forEach((n) => {
+        const p = positions.get(n.id());
+        if (p) n.position({ x: p.x, y: p.y });
+      });
+    });
 
-      const node = cy.getElementById(selectedId);
-      if (node.empty()) return;
+    if (!selectedId) {
+      cy.animate(
+        { fit: { eles: cy.elements(":visible"), padding: 50 } },
+        { duration: 420, easing: "ease-in-out-cubic" },
+      );
+      return;
+    }
 
-      const connectedEdges = node.connectedEdges();
-      const neighbors = connectedEdges.connectedNodes();
+    const node = cy.getElementById(selectedId);
+    if (node.empty()) return;
 
+    const connectedEdges = node.connectedEdges();
+    const neighbors = connectedEdges.connectedNodes();
+
+    cy.batch(() => {
       cy.nodes().addClass("dim");
       cy.edges().addClass("dim");
       neighbors.removeClass("dim").addClass("neighbor");
@@ -223,25 +245,37 @@ export default function GraphView({
       connectedEdges.removeClass("dim").addClass("active");
     });
 
-    const node = cy.getElementById(selectedId ?? "");
-    if (selectedId && !node.empty()) {
+    // Compact the neighborhood with a concentric layout: the selected node in
+    // the center, its neighbors ringed around it. Spacing accounts for label
+    // size so even hub nodes with many neighbors stay readable and non-overlapping
+    // (the ring grows as needed); the subsequent fit zooms the cluster in.
+    const layout = node.closedNeighborhood().nodes().layout({
+      name: "concentric",
+      animate: true,
+      animationDuration: 380,
+      animationEasing: "ease-in-out-cubic",
+      fit: false,
+      nodeDimensionsIncludeLabels: true,
+      concentric: (n: cytoscape.NodeSingular) => (n.id() === selectedId ? 100 : 1),
+      levelWidth: () => 1,
+      minNodeSpacing: 24,
+      spacingFactor: 1.1,
+    } as cytoscape.LayoutOptions);
+
+    layout.one("layoutstop", () => {
       cy.animate(
         { fit: { eles: node.closedNeighborhood(), padding: 90 } },
         {
-          duration: 420,
+          duration: 340,
           easing: "ease-in-out-cubic",
           // Shift the focused cluster left so right-side neighbors aren't
           // hidden behind the info panel that overlays the right edge.
           complete: () => cy.animate({ panBy: { x: -150, y: 0 } }, { duration: 200 }),
         },
       );
-    } else if (!selectedId) {
-      cy.animate(
-        { fit: { eles: cy.elements(":visible"), padding: 50 } },
-        { duration: 420, easing: "ease-in-out-cubic" },
-      );
-    }
-  }, [selectedId]);
+    });
+    layout.run();
+  }, [selectedId, positions]);
 
   return <div ref={containerRef} className="graph-canvas" />;
 }

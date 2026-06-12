@@ -206,15 +206,70 @@
   left: 18px;
   bottom: 18px;
   z-index: 10;
-  padding: 12px 14px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+/* --- dropdowns --- */
+.dropdown {
+  position: relative;
+}
+.dropdown-trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
   background: var(--bg-panel);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   backdrop-filter: blur(10px);
   box-shadow: var(--shadow);
-  width: 230px;
-  max-height: calc(100vh - 180px);
+  cursor: pointer;
+  transition: border-color 0.12s, color 0.12s;
+}
+.dropdown-trigger:hover,
+.dropdown.is-open .dropdown-trigger {
+  border-color: var(--accent);
+}
+.dropdown-title {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+.dropdown-summary {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-dim);
+}
+.dropdown-caret {
+  font-size: 10px;
+  color: var(--text-faint);
+  transition: transform 0.15s;
+}
+.dropdown.is-open .dropdown-caret {
+  transform: rotate(180deg);
+}
+.dropdown-menu {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 8px);
+  min-width: 220px;
+  padding: 10px 12px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--shadow);
+  max-height: calc(100vh - 200px);
   overflow-y: auto;
+}
+.dropdown-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 6px;
 }
 .legend-subhead {
   display: flex;
@@ -526,6 +581,12 @@
   .legend {
     bottom: auto;
     top: 18px;
+    align-items: flex-start;
+  }
+  /* Legend sits at the top on mobile, so menus open downward instead. */
+  .dropdown-menu {
+    bottom: auto;
+    top: calc(100% + 8px);
   }
   .brand-sub,
   .footof-note {
