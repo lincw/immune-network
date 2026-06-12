@@ -12,6 +12,8 @@ interface InfoPanelProps {
   node: NetworkNode | null;
   index: NetworkIndex;
   onSelect: (id: string) => void;
+  /** Remove this node from the subnetwork (explorer only). */
+  onHide?: (id: string) => void;
 }
 
 const SUBSYSTEM_LABELS: Record<NetworkNode["subsystem"], string> = {
@@ -21,7 +23,7 @@ const SUBSYSTEM_LABELS: Record<NetworkNode["subsystem"], string> = {
   shared: "Shared",
 };
 
-export default function InfoPanel({ node, index, onSelect }: InfoPanelProps) {
+export default function InfoPanel({ node, index, onSelect, onHide }: InfoPanelProps) {
   if (!node) {
     return (
       <aside className="info info--empty">
@@ -32,17 +34,19 @@ export default function InfoPanel({ node, index, onSelect }: InfoPanelProps) {
       </aside>
     );
   }
-  return <NodeCard node={node} index={index} onSelect={onSelect} />;
+  return <NodeCard node={node} index={index} onSelect={onSelect} onHide={onHide} />;
 }
 
 function NodeCard({
   node,
   index,
   onSelect,
+  onHide,
 }: {
   node: NetworkNode;
   index: NetworkIndex;
   onSelect: (id: string) => void;
+  onHide?: (id: string) => void;
 }) {
   const [thumb, setThumb] = useState<string | null>(null);
 
@@ -68,6 +72,15 @@ function NodeCard({
           {CATEGORY_LABELS[node.category]}
         </span>
         <span className="info-sub">{SUBSYSTEM_LABELS[node.subsystem]} immunity</span>
+        {onHide && (
+          <button
+            className="info-hide"
+            onClick={() => onHide(node.id)}
+            title="Hide this node from the subnetwork"
+          >
+            Hide
+          </button>
+        )}
       </div>
 
       <h2 className="info-title" style={{ borderColor: color }}>

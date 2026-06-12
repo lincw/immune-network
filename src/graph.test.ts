@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { NetworkIndex, searchNodes } from "./graph";
 import { networkData } from "./data/network";
+import { CATEGORY_ORDER } from "./types";
 
 const index = new NetworkIndex(networkData);
 
@@ -51,9 +52,25 @@ describe("NetworkIndex", () => {
     expect(ifng?.edge.type).toBe("secretes");
   });
 
-  it("sorts connections alphabetically by neighbor label", () => {
-    const labels = index.connections("th1").map((c) => c.node.label);
-    const sorted = [...labels].sort((a, b) => a.localeCompare(b));
-    expect(labels).toEqual(sorted);
+  it("groups connections by category, then natural-sorts by label", () => {
+    const conns = index.connections("th1");
+
+    // Categories appear in CATEGORY_ORDER and never interleave.
+    const ranks = conns.map((c) => CATEGORY_ORDER.indexOf(c.node.category));
+    expect(ranks).toEqual([...ranks].sort((a, b) => a - b));
+
+    // Within each category, labels are in natural (numeric-aware) order.
+    const byCat = new Map<string, string[]>();
+    for (const c of conns) {
+      const arr = byCat.get(c.node.category) ?? [];
+      arr.push(c.node.label);
+      byCat.set(c.node.category, arr);
+    }
+    for (const labels of byCat.values()) {
+      const sorted = [...labels].sort((a, b) =>
+        a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" }),
+      );
+      expect(labels).toEqual(sorted);
+    }
   });
 });

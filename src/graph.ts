@@ -1,4 +1,21 @@
-import type { NetworkData, NetworkEdge, NetworkNode } from "./types";
+import { CATEGORY_ORDER, type NetworkData, type NetworkEdge, type NetworkNode } from "./types";
+
+const CATEGORY_RANK = new Map(CATEGORY_ORDER.map((c, i) => [c, i]));
+
+/**
+ * Order two connections for display: group by category (so like kinds — all
+ * cells, all cytokines — sit together, matching the colored dots), then by
+ * label using a natural/numeric compare so e.g. IL-2 precedes IL-12.
+ */
+function compareConnections(a: Connection, b: Connection): number {
+  const ca = CATEGORY_RANK.get(a.node.category) ?? CATEGORY_ORDER.length;
+  const cb = CATEGORY_RANK.get(b.node.category) ?? CATEGORY_ORDER.length;
+  if (ca !== cb) return ca - cb;
+  return a.node.label.localeCompare(b.node.label, undefined, {
+    numeric: true,
+    sensitivity: "base",
+  });
+}
 
 /** A node together with the edge that connects it to a focused node. */
 export interface Connection {
@@ -47,7 +64,7 @@ export class NetworkIndex {
       direction: "incoming" as const,
       node: this.nodesById.get(edge.source)!,
     }));
-    return [...out, ...inc].sort((a, b) => a.node.label.localeCompare(b.node.label));
+    return [...out, ...inc].sort(compareConnections);
   }
 }
 

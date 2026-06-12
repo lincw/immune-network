@@ -409,6 +409,26 @@
   font-size: 12.5px;
   color: var(--text-faint);
 }
+.info-hide {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: var(--bg-elev);
+  border: 1px solid var(--border-strong);
+  border-radius: 7px;
+  padding: 3px 10px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+.info-hide:hover {
+  color: var(--text);
+  border-color: var(--accent);
+  background: rgba(57, 216, 230, 0.08);
+}
 
 .info-title {
   margin: 0 0 12px;
@@ -592,4 +612,190 @@
   .footof-note {
     display: none;
   }
+  .example-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ----------------------------- Brand button ----------------------------- */
+.brand--btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+}
+
+/* ----------------------------- Landing ----------------------------- */
+.landing {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 48px;
+  padding: 64px 24px;
+}
+/* Auto margins center the content vertically when there's room but collapse to
+   0 on overflow, so the top of the title is never clipped (justify-content:
+   center would clip it and make it unscrollable). */
+.landing-hero {
+  width: 100%;
+  max-width: 640px;
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+}
+.landing-examples {
+  margin-bottom: auto;
+}
+.landing-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(32px, 6vw, 52px);
+  letter-spacing: 0.2px;
+  background: linear-gradient(120deg, #ff5d73, #39d8e6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.landing-tagline {
+  margin: 0;
+  max-width: 30em;
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--text-dim);
+}
+.landing-search {
+  width: 100%;
+  margin-top: 8px;
+}
+/* The shared search uses position:relative + flex:1; center it on the landing. */
+.landing-search .search {
+  max-width: none;
+}
+.landing-fullmap {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.4px;
+  color: var(--text-faint);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+.landing-fullmap:hover {
+  color: var(--accent);
+}
+
+.landing-examples {
+  width: 100%;
+  max-width: 980px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.landing-examples-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  text-align: center;
+}
+.example-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+.example-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  text-align: left;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+}
+.example-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+.mini-graph {
+  width: 100%;
+  height: 96px;
+  display: block;
+}
+.mini-edge {
+  stroke: var(--border-strong);
+  stroke-width: 1;
+}
+.mini-center {
+  stroke: var(--bg-panel-solid);
+  stroke-width: 2;
+}
+.example-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.example-chip {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #07101a;
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-weight: 600;
+}
+.example-count {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-faint);
+}
+.example-name {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text);
+}
+.example-desc {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-dim);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ----------------------------- Explore hint ----------------------------- */
+.explore-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  margin: 0;
+  z-index: 10;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.3px;
+  color: var(--text-faint);
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 6px 14px;
+  backdrop-filter: blur(8px);
+  pointer-events: none;
 }
