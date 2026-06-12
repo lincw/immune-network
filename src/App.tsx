@@ -5,6 +5,7 @@ import Landing from "./components/Landing";
 import SearchBar from "./components/SearchBar";
 import InfoPanel from "./components/InfoPanel";
 import Legend from "./components/Legend";
+import Library from "./components/Library";
 import { NetworkIndex } from "./graph";
 import { networkData } from "./data/network";
 import {
@@ -16,7 +17,50 @@ import {
 import type { ThemeName } from "./theme";
 import "./styles/app.css";
 
-type Mode = "landing" | "explore" | "fullmap";
+type Mode = "landing" | "explore" | "fullmap" | "library";
+
+// Browser-history state for the "major" views (landing, an explore root,
+// the full map, and the library list/an article). Interactions within the
+// explorer (expanding/hiding nodes) don't push new entries.
+type NavState =
+  | { mode: "landing" }
+  | { mode: "explore"; nodeId: string }
+  | { mode: "fullmap" }
+  | { mode: "library"; articleId?: string };
+
+function navUrl(state: NavState): string {
+  switch (state.mode) {
+    case "landing":
+      return window.location.pathname + window.location.search;
+    case "explore":
+      return `#/explore/${encodeURIComponent(state.nodeId)}`;
+    case "fullmap":
+      return "#/map";
+    case "library":
+      return state.articleId
+        ? `#/library/${encodeURIComponent(state.articleId)}`
+        : "#/library";
+  }
+}
+
+/** Parse `#/explore/<id>`, `#/map`, `#/library` or `#/library/<id>` from the
+ * current URL hash. Anything else (including in-page TOC anchors like
+ * `#some-heading`, which don't start with `#/`) falls back to landing. */
+function parseNavState(): NavState {
+  const m = window.location.hash.match(/^#\/([a-z]+)(?:\/(.+))?$/);
+  if (!m) return { mode: "landing" };
+  const [, seg, rest] = m;
+  switch (seg) {
+    case "explore":
+      return rest ? { mode: "explore", nodeId: decodeURIComponent(rest) } : { mode: "landing" };
+    case "map":
+      return { mode: "fullmap" };
+    case "library":
+      return { mode: "library", articleId: rest ? decodeURIComponent(rest) : undefined };
+    default:
+      return { mode: "landing" };
+  }
+}
 
 function initialTheme(): ThemeName {
   const saved = localStorage.getItem("inet-theme");
@@ -39,6 +83,7 @@ export default function App() {
   const [visibleIds, setVisibleIds] = useState<Set<string>>(() => new Set());
   const [expanded, setExpanded] = useState<Set<string>>(() => new Set());
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [libraryArticleId, setLibraryArticleId] = useState<string | null>(null);
 
   const [theme, setTheme] = useState<ThemeName>(initialTheme);
   const [activeCategories, setActiveCategories] = useState<Set<Category>>(
@@ -55,24 +100,72 @@ export default function App() {
 
   const selectedNode = selectedId ? (index.getNode(selectedId) ?? null) : null;
 
-  const goHome = useCallback(() => {
-    setMode("landing");
-    setVisibleIds(new Set());
-    setExpanded(new Set());
-    setSelectedId(null);
-  }, []);
+  // Apply a NavState to React state without touching browser history (used
+  // both by `navigate` and by the popstate handler).
+  const applyNavState = useCallback(
+    (state: NavState) => {
+      switch (state.mode) {
+        case "landing":
+          setMode("landing");
+          setVisibleIds(new Set());
+          setExpanded(new Set());
+          setSelectedId(null);
+          setLibraryArticleId(null);
+          break;
+        case "explore": {
+          const vis = new Set<string>([state.nodeId]);
+          for (const nb of index.neighborIds(state.nodeId)) vis.add(nb);
+          setVisibleIds(vis);
+          setExpanded(new Set([state.nodeId]));
+          setSelectedId(state.nodeId);
+          setMode("explore");
+          break;
+        }
+        case "fullmap":
+          setMode("fullmap");
+          break;
+        case "library":
+          setMode("library");
+          setLibraryArticleId(state.articleId ?? null);
+          break;
+      }
+    },
+    [index],
+  );
+
+  // Apply a NavState and push it onto the browser history, so Back/Forward
+  // moves between major views (e.g. an article -> a search result -> back).
+  const navigate = useCallback(
+    (state: NavState) => {
+      applyNavState(state);
+      window.history.pushState(state, "", navUrl(state));
+    },
+    [applyNavState],
+  );
+
+  // Restore the initial view from the URL on first load, and keep in sync
+  // with Back/Forward afterwards.
+  useEffect(() => {
+    const initial = parseNavState();
+    if (initial.mode !== "landing") applyNavState(initial);
+    window.history.replaceState(initial, "", navUrl(initial));
+
+    const onPopState = (e: PopStateEvent) => {
+      const state = e.state as NavState | null;
+      // A null state means this entry came from an in-page anchor (e.g. a
+      // TOC link's `#heading-slug`) — leave the current view as-is.
+      if (state) applyNavState(state);
+    };
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, [applyNavState]);
+
+  const goHome = useCallback(() => navigate({ mode: "landing" }), [navigate]);
 
   // Start a fresh exploration rooted on a node (from search or an example card).
   const exploreNode = useCallback(
-    (id: string) => {
-      const vis = new Set<string>([id]);
-      for (const nb of index.neighborIds(id)) vis.add(nb);
-      setVisibleIds(vis);
-      setExpanded(new Set([id]));
-      setSelectedId(id);
-      setMode("explore");
-    },
-    [index],
+    (id: string) => navigate({ mode: "explore", nodeId: id }),
+    [navigate],
   );
 
   // Tapping a node inside the explorer selects it AND expands it (grows the
@@ -160,10 +253,12 @@ export default function App() {
   if (mode === "landing") {
     return (
       <div className="app">
+        <GithubLink className="github-link--fixed" />
         <Landing
           index={index}
           onPick={exploreNode}
-          onOpenFullMap={() => setMode("fullmap")}
+          onOpenFullMap={() => navigate({ mode: "fullmap" })}
+          onOpenLibrary={() => navigate({ mode: "library" })}
         />
       </div>
     );
@@ -179,13 +274,18 @@ export default function App() {
         <SearchBar onSelect={exploreNode} />
         <div className="topbar-actions">
           {mode === "explore" && (
-            <button className="ghost-btn" onClick={() => setMode("fullmap")}>
+            <button className="ghost-btn" onClick={() => navigate({ mode: "fullmap" })}>
               Full map
             </button>
           )}
-          {mode === "fullmap" && (
+          {(mode === "fullmap" || mode === "library") && (
             <button className="ghost-btn" onClick={goHome}>
               Home
+            </button>
+          )}
+          {mode !== "library" && (
+            <button className="ghost-btn" onClick={() => navigate({ mode: "library" })}>
+              Library
             </button>
           )}
           <button
@@ -196,6 +296,7 @@ export default function App() {
           >
             {theme === "dark" ? "☀" : "☾"}
           </button>
+          <GithubLink />
         </div>
       </header>
 
@@ -221,6 +322,15 @@ export default function App() {
               Click a ringed node to expand · right-click a node to hide it
             </p>
           </>
+        ) : mode === "library" ? (
+          <Library
+            selectedId={libraryArticleId}
+            theme={theme}
+            index={index}
+            onSelect={(articleId) => navigate({ mode: "library", articleId })}
+            onBack={() => navigate({ mode: "library" })}
+            onOpenInExplore={exploreNode}
+          />
         ) : (
           <>
             <GraphView
@@ -252,6 +362,23 @@ export default function App() {
         </span>
       </footer>
     </div>
+  );
+}
+
+function GithubLink({ className }: { className?: string }) {
+  return (
+    <a
+      className={`icon-btn github-link${className ? ` ${className}` : ""}`}
+      href="https://github.com/lincw/immune-network"
+      target="_blank"
+      rel="noreferrer"
+      aria-label="View source on GitHub"
+      title="View source on GitHub"
+    >
+      <svg viewBox="0 0 16 16" width="18" height="18" fill="currentColor" aria-hidden="true">
+        <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
+      </svg>
+    </a>
   );
 }
 

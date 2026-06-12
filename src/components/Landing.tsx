@@ -8,12 +8,13 @@ interface LandingProps {
   index: NetworkIndex;
   onPick: (id: string) => void;
   onOpenFullMap: () => void;
+  onOpenLibrary: () => void;
 }
 
 // Curated entry points — recognizable, well-connected hubs spanning categories.
 const EXAMPLE_IDS = ["dc", "th17", "il6", "inflammation", "macrophage", "ifng"];
 
-export default function Landing({ index, onPick, onOpenFullMap }: LandingProps) {
+export default function Landing({ index, onPick, onOpenFullMap, onOpenLibrary }: LandingProps) {
   const examples = useMemo(
     () =>
       EXAMPLE_IDS.map((id) => index.getNode(id)).filter(
@@ -33,9 +34,14 @@ export default function Landing({ index, onPick, onOpenFullMap }: LandingProps) 
         <div className="landing-search">
           <SearchBar onSelect={onPick} />
         </div>
-        <button className="landing-fullmap" onClick={onOpenFullMap}>
-          Explore the full map →
-        </button>
+        <div className="landing-links">
+          <button className="landing-fullmap" onClick={onOpenFullMap}>
+            Explore the full map →
+          </button>
+          <button className="landing-fullmap" onClick={onOpenLibrary}>
+            Browse the article library →
+          </button>
+        </div>
       </div>
 
       <div className="landing-examples">

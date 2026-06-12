@@ -8,3 +8,11 @@ dist-ssr
 
 # Source poster (large binary, not redistributed)
 immunologic-networks-poster.pdf
+
+# Brainstorming companion scratch files
+.superpowers/
+
+# AI
+docs/superpowers/
+.claude
+CLAUDE.md

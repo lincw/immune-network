@@ -14,6 +14,10 @@ interface InfoPanelProps {
   onSelect: (id: string) => void;
   /** Remove this node from the subnetwork (explorer only). */
   onHide?: (id: string) => void;
+  /** Dismiss this panel (article reader only). */
+  onClose?: () => void;
+  /** Switch to the full explorer focused on this node (article reader only). */
+  onExplore?: (id: string) => void;
 }
 
 const SUBSYSTEM_LABELS: Record<NetworkNode["subsystem"], string> = {
@@ -23,7 +27,14 @@ const SUBSYSTEM_LABELS: Record<NetworkNode["subsystem"], string> = {
   shared: "Shared",
 };
 
-export default function InfoPanel({ node, index, onSelect, onHide }: InfoPanelProps) {
+export default function InfoPanel({
+  node,
+  index,
+  onSelect,
+  onHide,
+  onClose,
+  onExplore,
+}: InfoPanelProps) {
   if (!node) {
     return (
       <aside className="info info--empty">
@@ -34,7 +45,16 @@ export default function InfoPanel({ node, index, onSelect, onHide }: InfoPanelPr
       </aside>
     );
   }
-  return <NodeCard node={node} index={index} onSelect={onSelect} onHide={onHide} />;
+  return (
+    <NodeCard
+      node={node}
+      index={index}
+      onSelect={onSelect}
+      onHide={onHide}
+      onClose={onClose}
+      onExplore={onExplore}
+    />
+  );
 }
 
 function NodeCard({
@@ -42,11 +62,15 @@ function NodeCard({
   index,
   onSelect,
   onHide,
+  onClose,
+  onExplore,
 }: {
   node: NetworkNode;
   index: NetworkIndex;
   onSelect: (id: string) => void;
   onHide?: (id: string) => void;
+  onClose?: () => void;
+  onExplore?: (id: string) => void;
 }) {
   const [thumb, setThumb] = useState<string | null>(null);
 
@@ -81,11 +105,22 @@ function NodeCard({
             Hide
           </button>
         )}
+        {onClose && (
+          <button className="info-close" onClick={onClose} aria-label="Close">
+            ×
+          </button>
+        )}
       </div>
 
       <h2 className="info-title" style={{ borderColor: color }}>
         {node.label}
       </h2>
+
+      {onExplore && (
+        <button className="ghost-btn info-explore" onClick={() => onExplore(node.id)}>
+          Explore in network →
+        </button>
+      )}
 
       {thumb && (
         <figure className="info-figure">

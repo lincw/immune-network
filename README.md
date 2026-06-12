@@ -26,6 +26,9 @@ own color, so the graph reads like imaging data rather than a flat diagram.
   re-focuses the graph on that neighbor.
 - **Category filter** — toggle cells, cytokines, transcription factors,
   antibodies, receptors, or functions on and off.
+- **Article library** — 10 bilingual (Chinese/English) reference articles on
+  innate immunity, adaptive immunity, immune cell timelines, regulation,
+  clinical applications, and more, with diagrams and a table of contents.
 
 ## Run it
 
@@ -64,12 +67,16 @@ src/
   data/wikipedia.ts   # article-title map + REST summary fetch (link + lead image)
   graph.ts            # NetworkIndex (neighbor lookups) + searchNodes()
   theme.ts            # category colors and per-theme palettes (light/dark)
+  content/articles/   # bilingual reference articles (registry + .md sources)
   components/
     GraphView.tsx     # Cytoscape canvas: layout, focus, neighbor highlighting
     SearchBar.tsx     # keyword input with autocomplete
     InfoPanel.tsx     # node details, Wikipedia image/link, clickable connections
     Legend.tsx        # color key / category filter
-  App.tsx             # state wiring (selection, filters)
+    Library.tsx       # article library list view
+    ArticleView.tsx   # article reader (TOC, mermaid diagrams, prev/next)
+    MermaidDiagram.tsx# lazy-loaded Mermaid renderer
+  App.tsx             # state wiring (selection, filters, mode)
   styles/             # global + app CSS
 ```
 
@@ -122,3 +129,7 @@ is not redistributed in this repository.
 
 Released under the [MIT License](LICENSE). Note that node images are loaded live
 from Wikipedia and remain under their respective licenses on Wikimedia Commons.
+
+The article library content under `src/content/articles/` is adapted from
+[lincw/immune_system](https://github.com/lincw/immune_system) (Chung-Wen Lin),
+licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
