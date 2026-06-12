@@ -1,4 +1,5 @@
 import { networkData } from "../../data/network";
+import { ARTICLES, type ArticleEntry } from "./index";
 
 export interface NodeTermMatch {
   term: string;
@@ -90,4 +91,29 @@ function linkPlain(text: string, terms: NodeTermMatch[], linked: Set<string>): s
     pos = best.index + best.term.length;
   }
   return result;
+}
+
+/** Shared node-term list, computed once for linking and reverse lookup. */
+export const NODE_TERMS = buildNodeTerms();
+
+const NODE_LINK_RE = /#node:([\w-]+)/g;
+
+/**
+ * Maps each node id to the ids of articles whose text mentions it (i.e.
+ * where `linkNodeTerms` would create a `#node:<id>` link for that node).
+ */
+export function buildArticleNodeIndex(
+  articles: ArticleEntry[] = ARTICLES,
+  terms: NodeTermMatch[] = NODE_TERMS,
+): Map<string, string[]> {
+  const map = new Map<string, string[]>();
+  for (const article of articles) {
+    const linked = linkNodeTerms(article.file, terms);
+    for (const m of linked.matchAll(NODE_LINK_RE)) {
+      const list = map.get(m[1]);
+      if (list) list.push(article.id);
+      else map.set(m[1], [article.id]);
+    }
+  }
+  return map;
 }

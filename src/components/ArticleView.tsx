@@ -7,15 +7,14 @@ import InfoPanel from "./InfoPanel";
 import type { NetworkIndex } from "../graph";
 import { ARTICLES, getArticle, getArticleIndex } from "../content/articles";
 import { extractToc } from "../content/articles/toc";
-import { buildNodeTerms, linkNodeTerms } from "../content/articles/nodeLinks";
+import { NODE_TERMS, linkNodeTerms } from "../content/articles/nodeLinks";
 import type { ThemeName } from "../theme";
-
-const NODE_TERMS = buildNodeTerms();
 
 interface ArticleViewProps {
   id: string;
   theme: ThemeName;
   index: NetworkIndex;
+  articleNodeIndex: Map<string, string[]>;
   onBack: () => void;
   onSelect: (id: string) => void;
   onOpenInExplore: (id: string) => void;
@@ -46,6 +45,7 @@ export default function ArticleView({
   id,
   theme,
   index,
+  articleNodeIndex,
   onBack,
   onSelect,
   onOpenInExplore,
@@ -181,6 +181,10 @@ export default function ArticleView({
             onSelect={setLinkedNodeId}
             onClose={() => setLinkedNodeId(null)}
             onExplore={onOpenInExplore}
+            onOpenArticle={onSelect}
+            articleMentions={(articleNodeIndex.get(linkedNode.id) ?? []).filter(
+              (articleId) => articleId !== id,
+            )}
           />
         </aside>
       )}

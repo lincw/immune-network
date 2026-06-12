@@ -7,6 +7,7 @@ interface LibraryProps {
   selectedId: string | null;
   theme: ThemeName;
   index: NetworkIndex;
+  articleNodeIndex: Map<string, string[]>;
   onSelect: (id: string) => void;
   onBack: () => void;
   onOpenInExplore: (id: string) => void;
@@ -24,6 +25,7 @@ export default function Library({
   selectedId,
   theme,
   index,
+  articleNodeIndex,
   onSelect,
   onBack,
   onOpenInExplore,
@@ -34,6 +36,7 @@ export default function Library({
         id={selectedId}
         theme={theme}
         index={index}
+        articleNodeIndex={articleNodeIndex}
         onBack={onBack}
         onSelect={onSelect}
         onOpenInExplore={onOpenInExplore}

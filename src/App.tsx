@@ -8,6 +8,7 @@ import Legend from "./components/Legend";
 import Library from "./components/Library";
 import { NetworkIndex } from "./graph";
 import { networkData } from "./data/network";
+import { buildArticleNodeIndex } from "./content/articles/nodeLinks";
 import {
   CATEGORY_ORDER,
   EDGE_TYPE_ORDER,
@@ -74,6 +75,7 @@ export default function App() {
   const index = useMemo(() => new NetworkIndex(networkData), []);
   const counts = useMemo(() => countByCategory(), []);
   const edgeCounts = useMemo(() => countByEdgeType(), []);
+  const articleNodeIndex = useMemo(() => buildArticleNodeIndex(), []);
 
   const [mode, setMode] = useState<Mode>("landing");
   // Exploration state. `visibleIds` is the explicit subnetwork (so hidden nodes
@@ -165,6 +167,12 @@ export default function App() {
   // Start a fresh exploration rooted on a node (from search or an example card).
   const exploreNode = useCallback(
     (id: string) => navigate({ mode: "explore", nodeId: id }),
+    [navigate],
+  );
+
+  // Open a library article (e.g. from a node's "Mentioned in" list).
+  const openArticle = useCallback(
+    (articleId: string) => navigate({ mode: "library", articleId }),
     [navigate],
   );
 
@@ -317,6 +325,8 @@ export default function App() {
               index={index}
               onSelect={tapNode}
               onHide={hideNode}
+              onOpenArticle={openArticle}
+              articleMentions={selectedNode ? articleNodeIndex.get(selectedNode.id) : undefined}
             />
             <p className="explore-hint">
               Click a ringed node to expand · right-click a node to hide it
@@ -327,6 +337,7 @@ export default function App() {
             selectedId={libraryArticleId}
             theme={theme}
             index={index}
+            articleNodeIndex={articleNodeIndex}
             onSelect={(articleId) => navigate({ mode: "library", articleId })}
             onBack={() => navigate({ mode: "library" })}
             onOpenInExplore={exploreNode}

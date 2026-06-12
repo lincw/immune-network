@@ -1,6 +1,12 @@
 import { describe, it, expect } from "vitest";
-import { buildNodeTerms, linkNodeTerms, type NodeTermMatch } from "./nodeLinks";
+import {
+  buildNodeTerms,
+  buildArticleNodeIndex,
+  linkNodeTerms,
+  type NodeTermMatch,
+} from "./nodeLinks";
 import { networkData } from "../../data/network";
+import { ARTICLES } from "./index";
 
 describe("buildNodeTerms", () => {
   const terms = buildNodeTerms();
@@ -62,5 +68,34 @@ describe("linkNodeTerms", () => {
     expect(out).toBe(
       "## IFN-γ overview\n\n[IFN-γ](#node:ifng) activates macrophages.",
     );
+  });
+});
+
+describe("buildArticleNodeIndex", () => {
+  const index = buildArticleNodeIndex();
+
+  it("maps a mentioned node to the articles that mention it", () => {
+    const articles = index.get("il6");
+    expect(articles).toBeDefined();
+    expect(articles).toContain("immune-system-intro");
+    for (const articleId of articles!) {
+      expect(ARTICLES.some((a) => a.id === articleId)).toBe(true);
+    }
+  });
+
+  it("only lists each article once per node, even if mentioned repeatedly", () => {
+    for (const articles of index.values()) {
+      expect(new Set(articles).size).toBe(articles.length);
+    }
+  });
+
+  it("supports custom article/term lists for testing", () => {
+    const terms: NodeTermMatch[] = [{ term: "IL-6", id: "il6" }];
+    const articles = [
+      { id: "a", file: "IL-6 drives inflammation.", titleZh: "", titleEn: "A", description: "", group: "reference" as const, order: 0 },
+      { id: "b", file: "No mention here.", titleZh: "", titleEn: "B", description: "", group: "reference" as const, order: 1 },
+    ];
+    const result = buildArticleNodeIndex(articles, terms);
+    expect(result.get("il6")).toEqual(["a"]);
   });
 });

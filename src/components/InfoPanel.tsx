@@ -7,6 +7,7 @@ import {
 } from "../types";
 import { CATEGORY_COLOR } from "../theme";
 import { wikipediaUrl, fetchWikiSummary } from "../data/wikipedia";
+import { getArticle } from "../content/articles";
 
 interface InfoPanelProps {
   node: NetworkNode | null;
@@ -18,6 +19,10 @@ interface InfoPanelProps {
   onClose?: () => void;
   /** Switch to the full explorer focused on this node (article reader only). */
   onExplore?: (id: string) => void;
+  /** Ids of library articles that mention this node. */
+  articleMentions?: string[];
+  /** Open a library article by id. */
+  onOpenArticle?: (id: string) => void;
 }
 
 const SUBSYSTEM_LABELS: Record<NetworkNode["subsystem"], string> = {
@@ -34,6 +39,8 @@ export default function InfoPanel({
   onHide,
   onClose,
   onExplore,
+  articleMentions,
+  onOpenArticle,
 }: InfoPanelProps) {
   if (!node) {
     return (
@@ -53,6 +60,8 @@ export default function InfoPanel({
       onHide={onHide}
       onClose={onClose}
       onExplore={onExplore}
+      articleMentions={articleMentions}
+      onOpenArticle={onOpenArticle}
     />
   );
 }
@@ -64,6 +73,8 @@ function NodeCard({
   onHide,
   onClose,
   onExplore,
+  articleMentions,
+  onOpenArticle,
 }: {
   node: NetworkNode;
   index: NetworkIndex;
@@ -71,6 +82,8 @@ function NodeCard({
   onHide?: (id: string) => void;
   onClose?: () => void;
   onExplore?: (id: string) => void;
+  articleMentions?: string[];
+  onOpenArticle?: (id: string) => void;
 }) {
   const [thumb, setThumb] = useState<string | null>(null);
 
@@ -147,6 +160,33 @@ function NodeCard({
         Read more on Wikipedia
         <span aria-hidden> ↗</span>
       </a>
+
+      {onOpenArticle && articleMentions && articleMentions.length > 0 && (
+        <section className="conn-group">
+          <h3 className="conn-title">
+            Mentioned in <span className="conn-count">{articleMentions.length}</span>
+          </h3>
+          <ul className="conn-list">
+            {articleMentions.map((articleId) => {
+              const article = getArticle(articleId);
+              if (!article) return null;
+              return (
+                <li key={articleId}>
+                  <button
+                    className="conn-item"
+                    onClick={() => onOpenArticle(articleId)}
+                  >
+                    <span className="conn-node">{article.titleZh || article.titleEn}</span>
+                    {article.titleZh && (
+                      <span className="conn-rel">{article.titleEn}</span>
+                    )}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      )}
 
       <ConnectionGroup
         title="Acts on / produces"
